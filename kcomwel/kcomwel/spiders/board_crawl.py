@@ -14,8 +14,8 @@ class BoardCrawlSpider(CrawlSpider):
     # 시작점으로 사용할 URL
     # 리스트로 지정 가능 - 여러 웹 페이지에서 크롤링을 시작하게 할 수 있다
     start_urls = [
-        # https://www.kcomwel.or.kr/Researchinstitute/lay1/program/S1T13C15/report_pg/list.do
-        'https://www.kcomwel.or.kr/Researchinstitute/lay1/program/S1T13C15/report_pg/list.do'
+        # https://www.kcomwel.or.kr/kcomwel/cust/pras/pras.jsp
+        'https://www.kcomwel.or.kr/kcomwel/cust/pras/pras.jsp',
     ]
 
 
@@ -32,11 +32,14 @@ class BoardCrawlSpider(CrawlSpider):
         #     # True로 설정되어 있으면, 응답에 다시 한번 rules를 적용해 재귀적으로 실행
         #     follow=True),
 
-        # Researchinstitute/lay1/program/S1T13C15/report_pg/view.do?total_search=&main_link=&division=&field=&published=&sdate=&edate=&rows=&cpage=&keyword=&condition=&seq=6194
-        # https://www.kcomwel.or.kr/Researchinstitute/lay1/program/S1T13C15/report_pg/view.do?menu_seq=15&seq=5919
-        Rule(LinkExtractor(allow=r'Researchinstitute/lay1/program/S1T13C15/report_pg/view.do\?menu_seq=15&seq=\d'), callback='parse_item', follow=True),
-        # https://www.kcomwel.or.kr/Researchinstitute/lay1/program/S1T13C15/report_pg/list.do?rows=10&cpage=2
-        # Rule(LinkExtractor(allow=r'Researchinstitute/lay1/program/S1T13C15/report_pg/list.do\?rows=10&cpage=\d'),callback='parse_item', follow=True)
+        # https://www.kcomwel.or.kr/kcomwel/cust/pras/pras.jsp?mode=view&article_no=1004313&board_wrapper=%2Fkcomwel%2Fcust%2Fpras%2Fpras.jsp&pager.offset=0&board_no=308
+        # https://www.kcomwel.or.kr/kcomwel/cust/pras/pras.jsp?mode=view&article_no=1004288&board_wrapper=%2Fkcomwel%2Fcust%2Fpras%2Fpras.jsp&pager.offset=0&board_no=308
+        Rule(LinkExtractor(allow=r'kcomwel/cust/pras/pras.jsp\?mode=view&article_no=.*&board_wrapper=%2Fkcomwel%2Fcust%2Fpras%2Fpras.jsp&pager.offset=0&board_no=308'), callback='parse_item', follow=True),
+        # https://www.kcomwel.or.kr/kcomwel/cust/pras/pras.jsp?mode=list&board_no=308&pager.offset=10
+        # https://www.kcomwel.or.kr/kcomwel/cust/pras/pras.jsp?mode=list&board_no=308&pager.offset=0
+        # https://www.kcomwel.or.kr/kcomwel/cust/pras/pras.jsp?mode=list&board_no=308&pager.offset=20
+        # https://www.kcomwel.or.kr/kcomwel/cust/pras/pras.jsp?mode=list&board_no=308&pager.offset=30
+        Rule(LinkExtractor(allow=r'kcomwel/cust/pras/pras.jsp\?mode=list&board_no=308&pager.offset=\d0'))
 
     )
     
@@ -53,15 +56,9 @@ class BoardCrawlSpider(CrawlSpider):
         #item['description'] = response.xpath('//div[@id="description"]').get()
         # //*[@id="sub"]/div[2]/table[1]/tbody/tr[1]/td[2]
         i['st_title'] = response.xpath(
-                '//*[@id="sub"]/div[2]/table[1]/tbody/tr[1]/td[2]/text()').extract()
+                '//*[@id="is-cont"]/div[2]/div/div/div[7]/div[1]/table/tbody/tr[strong/text()=" 제목 : "]/td/text()').extract()
         
-        i['st_author'] = response.xpath(
-                '//*[@id="sub"]/div[2]/table[1]/tbody/tr[2]/td[1]/text()').extract()
-        
-        i['st_index'] = response.xpath(
-                '//*[@id="testb1"]/p/text()').extract()
-
-        i['st_summary'] = response.xpath(
-                '//*[@id="testb"]/p/text()').extract()
+        i['st_content'] = response.xpath(
+                '//*[@id="article_text"]/text()').extract()
 
         return i

@@ -1,0 +1,9 @@
+import sqlite3
+
+con = sqlite3.connect("SQL_Lite/db.sqlite)
+
+# con.text_factory = str
+
+# con = sqlite3.connect(":memory")
+
+cur = con.cursor()
