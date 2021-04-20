@@ -1,9 +1,15 @@
 import sqlite3
 
-con = sqlite3.connect("SQL_Lite/db.sqlite)
 
+# 데이터베이스 파일이 저장될 경로와 파일 이름
+con = sqlite3.connect("sqlite/db.sqlite)
+
+# 유니코드 인코딩 문제가 발생하면 해당 코드의 주석 해제
 # con.text_factory = str
 
+# 메모리에서 직접 데이터베이스를 이용하는 코드
 # con = sqlite3.connect(":memory")
 
+# 데이터베이스를 동작시키기 위한 Cursor 객체를 생성
+# 데이터베이스를 사용하기 위한 마지각 준비
 cur = con.cursor()
